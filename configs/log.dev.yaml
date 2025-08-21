@@ -1,0 +1,41 @@
+version: 1
+disable_existing_loggers: false
+formatters:
+  simple:
+    format: '%(asctime)s | %(levelname)-8s | %(name)s:%(lineno)3d | %(message)s'
+    datefmt: '%Y-%m-%dT%H:%M:%S%z'
+  json_formatter:
+    (): pythonjsonlogger.jsonlogger.JsonFormatter
+    format: "%(asctime)s %(name)s %(levelname)s %(funcName)s %(lineno)d %(message)s"
+    datefmt: '%Y-%m-%dT%H:%M:%S%z'
+    rename_fields:
+      levelname: level
+      asctime: time
+      funcName: function
+      lineno: line
+
+handlers:
+  stderr:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: simple
+    stream: ext://sys.stderr
+  file_json:
+    class: logging.handlers.RotatingFileHandler
+    level: WARNING
+    formatter: json_formatter
+    filename: logs/app.log.jsonl
+    maxBytes: 2048
+    backupCount: 3
+  queue_handler:
+    class: logging.handlers.QueueHandler
+    handlers:
+    - stderr
+    - file_json
+    respect_handler_level: true
+
+loggers:
+  root:
+    level: DEBUG
+    handlers:
+    - queue_handler
