@@ -135,7 +135,6 @@ def transform_fact_registration(duck: DuckDBPyConnection):
 
 
 def transform_fact_fee(duck: DuckDBPyConnection):
-    # TODO: Failed to create fact_fee: Invariant violations: ["Non-nullable column violation for payment_date, found 422 null values"]
     # Transform semester_fees to fact_fee
     # alter semester_fees column id to fee_id
     duck.execute("""
@@ -192,9 +191,9 @@ def transform_fact_grade(duck: DuckDBPyConnection):
 
 
 def transform_fact_teaching(duck: DuckDBPyConnection):
-    # OK, this doesn't make any sense for me, same goes to attendance table
-    # The attendance table and this random value for teaching is generated, doesn't come from PostgreSQL db
-    # which is not ideal to demonstrate ETL pipeline
+    # OK, this doesn't make any sense for me; the same goes for the attendance table
+    # The attendance table and this random value for teaching are generated, and don't come from the PostgreSQL db
+    # which is not ideal to demonstrate an ETL pipeline
     #
     # But whatever, this flow just followed someone's Adv. Database course project last semester
     # So, just bear with it
