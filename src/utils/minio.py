@@ -30,7 +30,7 @@ def _parse_url(endpoint: str) -> tuple[str, bool]:
 @lru_cache(maxsize=1)
 def get_minio_client(config: Optional[Config] = None) -> Minio:
     cfg = config or Config()
-    endpoint = cfg.minio_endpoint.encoded_string()
+    endpoint = cfg.minio_endpoint_url
     logger.debug(f"raw endpoint={endpoint}")
     host, secure = _parse_url(endpoint)
     logger.debug(f"parsing minio endpoint host={host} secure={secure}")
@@ -43,3 +43,11 @@ def get_minio_client(config: Optional[Config] = None) -> Minio:
     )
 
     return client
+
+
+# idempotent bucket creation
+def ensure_bucket(bucket_name: str, client: Minio) -> None:
+    if not client.bucket_exists(bucket_name):
+        client.make_bucket(bucket_name)
+    else:
+        logger.info(f"Bucket '{bucket_name}' already exists")
