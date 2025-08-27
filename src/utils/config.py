@@ -1,4 +1,3 @@
-from pydantic import AnyUrl
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -8,13 +7,14 @@ from pydantic_settings import (
 
 
 class Config(BaseSettings):
-    minio_endpoint: AnyUrl
+    minio_endpoint_url: str
     minio_access_key: str
     minio_secret_key: str
 
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
+        extra="ignore",
     )
 
 
