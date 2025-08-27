@@ -1,30 +1,47 @@
 import logging
 import os
 
-import pandas as pd
-from deltalake import DeltaTable
-from deltalake.writer import write_deltalake
+import duckdb
+from dotenv import load_dotenv
 
+from pipeline.extract import extract
+from pipeline.load import load_pipeline
+from pipeline.transform import transform
 from utils.logging import setup_logging
 
-# from utils.minio import get_minio_client
+load_dotenv()
+setup_logging()
+
+logger = logging.getLogger(__name__)
 
 
 def main():
-    setup_logging()
-    logger = logging.getLogger(__name__)
-    logger.info("Starting Delta Lakehouse example")
-    df = pd.DataFrame(range(5), columns=["id"])
-    os.makedirs("./data/deltars_table", exist_ok=True)
-    # Create Pandas DataFrame
-    write_deltalake("./data/deltars_table", df, mode="overwrite")
-    # Write Delta Lake table
-    df = pd.DataFrame(range(6, 11), columns=["id"])  # Generate new data
-    write_deltalake("./data/deltars_table", df, mode="append")
-    # Append new data
-    dt = DeltaTable("./data/deltars_table")
-    # Read Delta Lake table
-    print(dt.to_pandas())
+    logger.info("🚀 Starting ETL Pipeline")
+    os.makedirs("data/duckdb", exist_ok=True)
+
+    logger.info("🔌 Connecting to DuckDB...")
+    db_con: duckdb.DuckDBPyConnection = duckdb.connect(
+        database="data/duckdb/siak.duckdb"
+    )
+
+    logger.info("📦 Installing PostgreSQL extension...")
+    db_con.execute("INSTALL postgres;")
+    db_con.execute("LOAD postgres;")
+
+    logger.info("🔗 Attaching to PostgreSQL database...")
+    db_con.execute("ATTACH DATABASE '' AS p_siak (TYPE POSTGRES, READ_ONLY);")
+
+    logger.info("📥 Extracting data...")
+    extract(db_con)
+
+    logger.info("🔄 Transforming data...")
+    transform(db_con)
+
+    logger.info("📤 Loading data...")
+    load_pipeline(db_con)
+
+    db_con.close()
+    logger.info("✅ ETL Pipeline completed successfully!")
 
 
 if __name__ == "__main__":
