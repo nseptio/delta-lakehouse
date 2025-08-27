@@ -33,6 +33,10 @@ cp .env.example .env
 # MINIO_ENDPOINT=localhost:9000
 # MINIO_ACCESS_KEY=minioadmin
 # MINIO_SECRET_KEY=minioadmin
+# PGPASSWORD=postgres
+# PGHOST=localhost
+# PGUSER=postgres
+# PGDATABASE=siak
 ```
 
 ### 3. Start MinIO Storage
@@ -90,10 +94,19 @@ uv run python -m src.scripts.generate_data --format json
 uv run python -m src.scripts.generate_data --format json --output data/custom
 ```
 
-### 6. Run the Main Application
+### 6. Seed Fake Data into PostgreSQL
 
 ```bash
-# Run the main Delta Lake example
+# Seed generated data into PostgreSQL database
+uv run python -m src.scripts.seed_data
+```
+
+### 7. Run the Main Application
+
+This application demonstrates ETL processes from PostgreSQL to Delta Lake on MinIO.
+
+```bash
+# Ensure MinIO and PostgreSQL are running
 uv run python src/main.py
 ```
 
@@ -115,6 +128,10 @@ class_schedule: 5000
 registration: 200000 # Realistic university scale
 ```
 
+### Logging Configuration
+
+Adjust logging settings in [`configs/log.dev.yaml`](configs/log.dev.yaml).
+
 ### Environment Variables
 
 Configure `.env` file for your environment:
@@ -125,9 +142,11 @@ MINIO_ENDPOINT=localhost:9000
 MINIO_ACCESS_KEY=minioadmin
 MINIO_SECRET_KEY=minioadmin
 
-# Optional: Custom configurations
-# LOG_LEVEL=INFO
-# DATA_OUTPUT_DIR=data/generated
+# PostgreSQL Configuration
+PGPASSWORD=postgres
+PGHOST=localhost
+PGUSER=postgres
+PGDATABASE=siak
 ```
 
 ## 📊 Data Generation
