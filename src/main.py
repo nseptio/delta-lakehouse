@@ -5,7 +5,8 @@ import duckdb
 from dotenv import load_dotenv
 
 from pipeline.extract import extract
-from pipeline.load import load_pipeline
+from pipeline.load_delta import load_delta
+from pipeline.load_iceberg import load_iceberg
 from pipeline.transform import transform
 from utils.logging import setup_logging
 
@@ -37,8 +38,11 @@ def main():
     logger.info("🔄 Transforming data...")
     transform(db_con)
 
-    logger.info("📤 Loading data...")
-    load_pipeline(db_con)
+    logger.info("📤 Loading data with Delta table...")
+    load_delta(db_con)
+
+    logger.info("📤 Loading data with Iceberg table...")
+    load_iceberg(db_con)
 
     db_con.close()
     logger.info("✅ ETL Pipeline completed successfully!")
