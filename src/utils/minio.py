@@ -6,9 +6,7 @@ from urllib.parse import urlparse
 from minio import Minio
 
 from .config import Config
-from .logging import setup_logging
 
-setup_logging()
 logger = logging.getLogger(__name__)
 
 
