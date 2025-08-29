@@ -1,0 +1,21 @@
+catalog:
+  postgres:
+    type: sql
+    uri: postgresql+psycopg://postgres:postgres@localhost:5432/iceberg_catalog
+    warehouse: s3://lakehouse/iceberg
+    s3.endpoint: http://localhost:9000
+    s3.access-key-id: minioadmin
+    s3.secret-access-key: minioadmin
+    s3.path-style-access: true
+
+  # Catalog using SQLite and local file system
+  # Good for local testing and development
+  local:
+    uri: sqlite:///iceberg_catalog/catalog.db
+    warehouse: file://iceberg_catalog
+
+  # polaris:
+  #   uri: http://polaris:8181
+  #   credential: [minioadmin, minioadmin]
+  #   warehouse: s3://lakehouse/iceberg/
+  #   type: polaris
