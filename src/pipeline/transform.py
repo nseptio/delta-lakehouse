@@ -200,17 +200,18 @@ def transform_fact_teaching(duck: DuckDBPyConnection):
     duck.execute("""
         CREATE OR REPLACE TABLE fact_teaching AS
         SELECT
-            cs.id AS teaching_id,
-            cs.lecturer_id,
-            cs.course_id,
-            cs.semester_id,
-            cs.id AS class_id,
-            cs.room_id,
-            FLOOR(RANDOM() * 31) + 15 AS total_students,  -- 15-45 students per class
-            FLOOR(RANDOM() * 3) + 14 AS total_sessions,   -- 14-16 sessions per semester
-            FLOOR(RANDOM() * 17) AS sessions_completed,   -- 0-16 sessions completed
-            ROUND((RANDOM() * 2.0 + 2.0)::DECIMAL, 1) AS teaching_hours  -- 2.0-4.0 hours per session
+            CAST(cs.id AS BIGINT) AS teaching_id,
+            CAST(cs.lecturer_id AS BIGINT) AS lecturer_id,
+            CAST(cs.course_id AS BIGINT) AS course_id,
+            CAST(cs.semester_id AS BIGINT) AS semester_id,
+            CAST(cs.id AS BIGINT) AS class_id,
+            CAST(cs.room_id AS BIGINT) AS room_id,
+            CAST(FLOOR(RANDOM() * 31) + 15 AS INTEGER) AS total_students,  -- 15-45 students per class
+            CAST(FLOOR(RANDOM() * 3) + 14 AS INTEGER) AS total_sessions,   -- 14-16 sessions per semester
+            CAST(FLOOR(RANDOM() * 17) AS INTEGER) AS sessions_completed,   -- 0-16 sessions completed
+            CAST(ROUND((RANDOM() * 2.0 + 2.0)::DECIMAL, 1) AS INTEGER) AS teaching_hours  -- 2.0-4.0 hours per session
         FROM class_schedules cs
+        WHERE cs.id IS NOT NULL AND cs.lecturer_id IS NOT NULL AND cs.course_id IS NOT NULL AND cs.semester_id IS NOT NULL AND cs.room_id IS NOT NULL
     """)
 
 
@@ -218,16 +219,17 @@ def transform_fact_room_usage(duck: DuckDBPyConnection):
     duck.execute("""
         CREATE OR REPLACE TABLE fact_room_usage AS
         SELECT
-            cs.id AS usage_id,
-            cs.room_id,
-            cs.id AS class_id,
-            cs.semester_id,
+            CAST(cs.id AS BIGINT) AS usage_id,
+            CAST(cs.room_id AS BIGINT) AS room_id,
+            CAST(cs.id AS BIGINT) AS class_id,
+            CAST(cs.semester_id AS BIGINT) AS semester_id,
             CAST(CURRENT_DATE - INTERVAL (FLOOR(RANDOM() * 91)::INT) DAY AS DATE) AS usage_date,
             CAST(cs.start_time AS VARCHAR) AS start_time,
             CAST(cs.end_time AS VARCHAR) AS end_time,
-            FLOOR(RANDOM() * 31) + 10 AS actual_occupancy,  -- 10-40 students
-            ROUND(((FLOOR(RANDOM() * 31) + 10) / 50.0) * 100, 2) AS utilization_rate  -- Utilization rate based on capacity of 50
+            CAST(FLOOR(RANDOM() * 31) + 10 AS INTEGER) AS actual_occupancy,  -- 10-40 students
+            CAST(ROUND(((FLOOR(RANDOM() * 31) + 10) / 50.0) * 100, 2) AS FLOAT) AS utilization_rate  -- Utilization rate based on capacity of 50
         FROM class_schedules cs
+        WHERE cs.id IS NOT NULL AND cs.room_id IS NOT NULL AND cs.semester_id IS NOT NULL AND cs.start_time IS NOT NULL AND cs.end_time IS NOT NULL
     """)
 
 
