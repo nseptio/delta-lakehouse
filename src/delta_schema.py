@@ -92,7 +92,7 @@ fact_grade = pa.schema(
         pa.field("student_id", pa.int64(), nullable=False),
         pa.field("course_id", pa.int64(), nullable=False),
         pa.field("semester_id", pa.int64(), nullable=False),
-        pa.field("final_grade", pa.decimal128(5, 2), nullable=False),
+        pa.field("final_grade", pa.float32(), nullable=False),
         pa.field("letter_grade", pa.string(), nullable=False),
     ]
 )
@@ -102,7 +102,7 @@ fact_fee = pa.schema(
         pa.field("fee_id", pa.int64(), nullable=False),
         pa.field("student_id", pa.int64(), nullable=False),
         pa.field("semester_id", pa.int64(), nullable=False),
-        pa.field("fee_amount", pa.decimal128(15, 2), nullable=False),
+        pa.field("fee_amount", pa.float64(), nullable=False),
         pa.field("payment_date", pa.date32()),
     ]
 )
@@ -112,8 +112,8 @@ fact_academic = pa.schema(
         pa.field("academic_id", pa.int64(), nullable=False),
         pa.field("student_id", pa.int64(), nullable=False),
         pa.field("semester_id", pa.int64(), nullable=False),
-        pa.field("semester_gpa", pa.decimal128(5, 2), nullable=False),
-        pa.field("cumulative_gpa", pa.decimal128(5, 2), nullable=False),
+        pa.field("semester_gpa", pa.float32(), nullable=False),
+        pa.field("cumulative_gpa", pa.float32(), nullable=False),
         pa.field("semester_credits", pa.int32(), nullable=False),
         pa.field("credits_passed", pa.int32(), nullable=False),
         pa.field("total_credits", pa.int32(), nullable=False),
