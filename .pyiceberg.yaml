@@ -1,7 +1,7 @@
 catalog:
   postgres:
     type: sql
-    uri: postgresql+psycopg://postgres:postgres@localhost:5432/iceberg_catalog
+    uri: postgresql+psycopg://postgres:postgres@localhost:5432/siak
     warehouse: s3://lakehouse/iceberg
     s3.endpoint: http://localhost:9000
     s3.access-key-id: minioadmin
