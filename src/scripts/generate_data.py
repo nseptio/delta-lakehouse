@@ -4,9 +4,9 @@ import logging
 import os
 from typing import Dict, List
 
-import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
+from pyarrow import csv
 
 from src.generator.academic_record_faker import generate_academic_record
 from src.generator.class_schedule_faker import generate_class_schedule
@@ -105,8 +105,8 @@ def save_to_csv(data: List[Dict], output_dir: str, file_name: str) -> None:
     os.makedirs(output_dir, exist_ok=True)
 
     filepath = os.path.join(output_dir, f"{file_name}.csv")
-    df = pd.DataFrame(data)
-    df.to_csv(filepath, index=False)
+    table = pa.Table.from_pylist(data)
+    csv.write_csv(table, filepath)
     logger.info(f"Saved {len(data)} records to {filepath}")
 
 
