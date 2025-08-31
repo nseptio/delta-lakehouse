@@ -4,8 +4,8 @@ import os
 from duckdb import DuckDBPyConnection
 from pyiceberg.catalog import load_catalog
 
-import iceberg_schema
-import delta_schema
+import schemas.iceberg_schema as iceberg_schema
+import schemas.delta_schema as delta_schema
 
 logger = logging.getLogger(__name__)
 

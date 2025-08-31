@@ -3,7 +3,7 @@ import logging
 from deltalake import DeltaTable, write_deltalake
 from duckdb import DuckDBPyConnection
 
-import delta_schema
+import schemas.delta_schema as delta_schema
 from utils.config import Config
 from utils.minio import ensure_bucket, get_minio_client
 
