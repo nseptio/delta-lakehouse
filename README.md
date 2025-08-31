@@ -1,5 +1,13 @@
 # Delta Lakehouse Project
 
+<!-- TODO with emot-->
+
+## 🛠️ To Do
+
+- [ ] Use Pydantic to validate data source models
+- [ ] Create command line interface for fast environment setup testing (Python Fire or Makefile)
+- [ ] Add dashboard for data visualization
+
 ## 📋 Prerequisites
 
 Before running this project, ensure you have the following installed:
@@ -16,7 +24,7 @@ Before running this project, ensure you have the following installed:
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/nseptio/delta-lakehouse
 cd delta-lakehouse
 
 # Install dependencies using uv
