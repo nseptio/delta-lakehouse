@@ -2,10 +2,13 @@ import argparse
 import json
 import logging
 import os
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
 from typing import Dict, List
 
+import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
+from faker import Faker
 from pyarrow import csv
 
 from src.generator.academic_record_faker import generate_academic_record
@@ -28,7 +31,69 @@ logger = logging.getLogger(__name__)
 
 
 def save_generated_data(save_format: str, output_dir: str) -> None:
+    fake = Faker("id_ID")
     cfg = FakerConfig()
+
+    logger.info("Generating faculties")
+    faculties = generate_faculty(fake, cfg.faculty)
+
+    logger.info("Generating programs")
+    programs = generate_program(fake, faculties, cfg.program)
+
+    logger.info("Generating lecturers")
+    lecturers = generate_lecturer(fake, faculties, cfg.lecturer)
+
+    logger.info("Generating students")
+    students = generate_student(fake, programs, cfg.student)
+
+    logger.info("Generating rooms")
+    rooms = generate_room(cfg.room)
+
+    logger.info("Generating courses")
+    courses = generate_course(fake, programs, cfg.course)
+
+    logger.info("Generating semesters")
+    semesters = generate_semester(cfg.semester)
+
+    logger.info("Generating class schedules")
+    class_schedules = generate_class_schedule(
+        courses, lecturers, rooms, semesters, cfg.class_schedule
+    )
+
+    logger.info("Generating registrations")
+    cores = os.cpu_count()
+    lengths = [len(c) for c in np.array_split(np.zeros(cfg.registration), cores)]
+    chunks = [(students, courses, semesters, length) for length in lengths]
+    registrations = []
+    with ProcessPoolExecutor() as executor:
+        futures = [
+            executor.submit(generate_registration, s, c, sem, length)
+            for s, c, sem, length in chunks
+        ]
+
+        for f in as_completed(futures):
+            registrations.extend(f.result())
+
+    logger.info("Generating grades")
+    grades = generate_grade(registrations)
+
+    logger.info("Generating semester fees")
+    semester_fees = generate_semester_fees(students, semesters, programs)
+
+    logger.info("Generating academic records")
+    student_chunks = np.array_split(students, cores)
+    chunks = [
+        (chunk, semesters, registrations, grades, courses) for chunk in student_chunks
+    ]
+    academic_records = []
+    with ProcessPoolExecutor() as executor:
+        futures = [
+            executor.submit(generate_academic_record, s, sem, reg, g, c)
+            for s, sem, reg, g, c in chunks
+        ]
+
+        for f in as_completed(futures):
+            academic_records.extend(f.result())
 
     def save(data, name):
         if save_format == "csv":
@@ -38,59 +103,25 @@ def save_generated_data(save_format: str, output_dir: str) -> None:
         else:
             save_to_json(data, output_dir, name)
 
-    logger.info("Generating faculties")
-    faculties = generate_faculty(cfg.faculty)
-    save(faculties, "faculties")
-
-    logger.info("Generating programs")
-    programs = generate_program(faculties, cfg.program)
-    save(programs, "programs")
-
-    logger.info("Generating lecturers")
-    lecturers = generate_lecturer(faculties, cfg.lecturer)
-    save(lecturers, "lecturers")
-
-    logger.info("Generating students")
-    students = generate_student(programs, cfg.student)
-    save(students, "students")
-
-    logger.info("Generating rooms")
-    rooms = generate_room(cfg.room)
-    save(rooms, "rooms")
-
-    logger.info("Generating courses")
-    courses = generate_course(programs, cfg.course)
-    save(courses, "courses")
-
-    logger.info("Generating semesters")
-    semesters = generate_semester(cfg.semester)
-    save(semesters, "semesters")
-
-    logger.info("Generating class schedules")
-    class_schedules = generate_class_schedule(
-        courses, lecturers, rooms, semesters, cfg.class_schedule
-    )
-    save(class_schedules, "class_schedules")
-
-    logger.info("Generating registrations")
-    registrations = generate_registration(
-        students, courses, semesters, cfg.registration
-    )
-    save(registrations, "registrations")
-
-    logger.info("Generating grades")
-    grades = generate_grade(registrations)
-    save(grades, "grades")
-
-    logger.info("Generating semester fees")
-    semester_fees = generate_semester_fees(students, semesters, programs)
-    save(semester_fees, "semester_fees")
-
-    logger.info("Generating academic records")
-    academic_records = generate_academic_record(
-        students, semesters, registrations, grades, courses
-    )
-    save(academic_records, "academic_records")
+    # Save all generated data at the end
+    with ThreadPoolExecutor() as executor:
+        executor.map(
+            save,
+            [
+                (faculties, "faculties"),
+                (programs, "programs"),
+                (lecturers, "lecturers"),
+                (students, "students"),
+                (rooms, "rooms"),
+                (courses, "courses"),
+                (semesters, "semesters"),
+                (class_schedules, "class_schedules"),
+                (registrations, "registrations"),
+                (grades, "grades"),
+                (semester_fees, "semester_fees"),
+                (academic_records, "academic_records"),
+            ],
+        )
 
 
 def save_to_json(data: List[Dict], output_dir: str, file_name: str) -> None:
