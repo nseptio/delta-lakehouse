@@ -5,7 +5,7 @@ import duckdb
 import psycopg
 from dotenv import load_dotenv
 
-from utils.logging import setup_logging
+from src.utils.logging import setup_logging
 
 load_dotenv()
 setup_logging()
