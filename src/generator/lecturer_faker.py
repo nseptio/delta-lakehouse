@@ -1,10 +1,8 @@
 from faker import Faker
 import random
 
-fake = Faker("id_ID")
 
-
-def generate_lecturer(faculties, n=30):
+def generate_lecturer(fake: Faker, faculties, n=30):
     """
     Generate n random lecturer entries
 

@@ -1,10 +1,6 @@
 import random
 from datetime import datetime, timedelta
 
-from faker import Faker
-
-fake = Faker("id_ID")
-
 
 def generate_semester_fees(students, semesters, programs=None):
     """

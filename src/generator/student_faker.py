@@ -1,11 +1,10 @@
-from faker import Faker
 import random
 from datetime import datetime
 
-fake = Faker("id_ID")
+from faker import Faker
 
 
-def generate_student(programs, n=100, start_year=2018, end_year=2023):
+def generate_student(fake: Faker, programs, n=100, start_year=2018, end_year=2023):
     """
     Generate n random student entries
 

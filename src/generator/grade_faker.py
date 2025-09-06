@@ -1,7 +1,4 @@
-from faker import Faker
 import random
-
-fake = Faker("id_ID")
 
 # Indonesian university grading scale
 grade_ranges = [

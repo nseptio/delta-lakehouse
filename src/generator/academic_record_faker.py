@@ -1,7 +1,4 @@
-from faker import Faker
-from typing import Tuple, List
-
-fake = Faker("id_ID")
+from typing import List, Tuple
 
 
 def calculate_gpa(grades, courses, registrations=None) -> Tuple[float, int]:

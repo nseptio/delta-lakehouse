@@ -1,7 +1,4 @@
-from faker import Faker
 import random
-
-fake = Faker("id_ID")
 
 # Actual building names at UI campus
 building_options = [

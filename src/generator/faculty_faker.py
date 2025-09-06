@@ -1,7 +1,5 @@
 from faker import Faker
 
-fake = Faker("id_ID")
-
 # Accurate list of UI's faculties (as of 2023)
 faculty_options = [
     ("FH", "Fakultas Hukum"),
@@ -23,7 +21,7 @@ faculty_options = [
 ]
 
 
-def generate_faculty(n=1):
+def generate_faculty(fake: Faker, n=1):
     """
     Generate n random faculty entries
     Returns list of dicts with keys: id, faculty_code, faculty_name

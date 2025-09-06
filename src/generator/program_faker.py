@@ -1,8 +1,6 @@
 from faker import Faker
 import random
 
-fake = Faker("id_ID")
-
 # Accurate programs by faculty at UI (as of 2023)
 program_options = {
     "FH": [
@@ -128,7 +126,7 @@ program_options = {
 }
 
 
-def generate_program(faculties, n=10):
+def generate_program(fake: Faker, faculties, n=10):
     """
     Generate n random program entries
     Returns list of dicts with keys: id, program_code, program_name, faculty_id

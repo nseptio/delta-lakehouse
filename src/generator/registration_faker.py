@@ -1,8 +1,5 @@
-from faker import Faker
 import random
 from datetime import datetime, timedelta
-
-fake = Faker("id_ID")
 
 
 def generate_registration(students, courses, semesters, n=500):

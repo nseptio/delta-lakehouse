@@ -1,8 +1,5 @@
-from faker import Faker
 import random
 from datetime import time
-
-fake = Faker("id_ID")
 
 # UI uses Monday-Friday (Senin-Jumat) with occasional Saturday classes
 days_of_week = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"]

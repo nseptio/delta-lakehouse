@@ -11,15 +11,15 @@ through ETL processes.
 import random
 from datetime import datetime, timedelta
 from typing import Dict, List
-
 from faker import Faker
-
-# Initialize faker
-fake = Faker("id_ID")
 
 
 def generate_attendance(
-    students: List[Dict], class_schedules: List[Dict], semesters: List[Dict], count=None
+    fake: Faker,
+    students: List[Dict],
+    class_schedules: List[Dict],
+    semesters: List[Dict],
+    count=None,
 ) -> List[Dict]:
     """
     Generate attendance records for class sessions

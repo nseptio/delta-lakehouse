@@ -1,8 +1,5 @@
-from faker import Faker
 import random
 from datetime import datetime, timedelta
-
-fake = Faker("id_ID")
 
 
 def generate_semester(n=18, start_year=2018, end_year=2027):

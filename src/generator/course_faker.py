@@ -1,8 +1,6 @@
 from faker import Faker
 import random
 
-fake = Faker("id_ID")
-
 # Course name templates and prefixes by faculty at UI
 
 # Course prefix codes by faculty - these come before the numeric code
@@ -326,7 +324,7 @@ course_subjects = [
 ]
 
 
-def generate_course(programs, n=100):
+def generate_course(fake: Faker, programs, n=100):
     """
     Generate n random course entries using UI's course code format
 
