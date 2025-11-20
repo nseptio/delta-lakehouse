@@ -1,4 +1,6 @@
 import random
+import uuid
+from datetime import datetime
 
 # Actual building names at UI campus
 building_options = [
@@ -78,10 +80,11 @@ def generate_room(n=50):
     Generate n random room entries
 
     Returns:
-        List of dicts with keys: id, room_number, building, capacity
+        List of dicts with keys: room_id, id, room_code, building, capacity, created_at, updated_at
     """
     result = []
     used_room_building = set()
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     for i in range(1, n + 1):
         # Select a random building
@@ -114,10 +117,13 @@ def generate_room(n=50):
 
         result.append(
             {
+                "room_id": str(uuid.uuid4()),
                 "id": i,
-                "room_number": room_number,
+                "room_code": room_number,
                 "building": building,
                 "capacity": capacity,
+                "created_at": current_time,
+                "updated_at": current_time,
             }
         )
 

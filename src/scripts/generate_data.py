@@ -95,7 +95,8 @@ def save_generated_data(save_format: str, output_dir: str) -> None:
         for f in as_completed(futures):
             academic_records.extend(f.result())
 
-    def save(data, name):
+    def save(data_name_tuple):
+        data, name = data_name_tuple
         if save_format == "csv":
             save_to_csv(data, output_dir, name)
         elif save_format == "parquet":
@@ -105,22 +106,24 @@ def save_generated_data(save_format: str, output_dir: str) -> None:
 
     # Save all generated data at the end
     with ThreadPoolExecutor() as executor:
-        executor.map(
-            save,
-            [
-                (faculties, "faculties"),
-                (programs, "programs"),
-                (lecturers, "lecturers"),
-                (students, "students"),
-                (rooms, "rooms"),
-                (courses, "courses"),
-                (semesters, "semesters"),
-                (class_schedules, "class_schedules"),
-                (registrations, "registrations"),
-                (grades, "grades"),
-                (semester_fees, "semester_fees"),
-                (academic_records, "academic_records"),
-            ],
+        list(
+            executor.map(
+                save,
+                [
+                    (faculties, "faculties"),
+                    (programs, "programs"),
+                    (lecturers, "lecturers"),
+                    (students, "students"),
+                    (rooms, "rooms"),
+                    (courses, "courses"),
+                    (semesters, "semesters"),
+                    (class_schedules, "class_schedules"),
+                    (registrations, "registrations"),
+                    (grades, "grades"),
+                    (semester_fees, "semester_fees"),
+                    (academic_records, "academic_records"),
+                ],
+            )
         )
 
 

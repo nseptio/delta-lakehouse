@@ -1,4 +1,5 @@
 import random
+import uuid
 from datetime import datetime, timedelta
 
 
@@ -11,10 +12,12 @@ def generate_semester_fees(students, semesters, programs=None):
         semesters: List of semester dicts from semester_faker
 
     Returns:
-        List of dicts with keys: id, student_id, semester_id, fee_amount, payment_date
+        List of dicts with keys: fee_id, id, student_id, semester_id, fee_amount,
+                                payment_timestamp, created_at, updated_at
     """
     result = []
     counter = 1
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # UI uses UKT (Uang Kuliah Tunggal) system with 8 levels based on family income
     # Each program has different UKT ranges
@@ -130,21 +133,29 @@ def generate_semester_fees(students, semesters, programs=None):
                 # Determine if payment was made
                 payment_made = random.random() < 0.95  # 95% of fees are paid
 
-                # If payment made, generate a payment date (usually before semester start)
-                payment_date = None
+                # If payment made, generate a payment timestamp (usually before semester start)
+                payment_timestamp = None
                 if payment_made:
                     days_before = random.randint(1, 30)
-                    payment_date = (
-                        semester_start - timedelta(days=days_before)
-                    ).strftime("%Y-%m-%d")
+                    payment_datetime = semester_start - timedelta(days=days_before)
+                    # Add random hours and minutes for more realistic timestamps
+                    hours = random.randint(8, 17)
+                    minutes = random.randint(0, 59)
+                    payment_datetime = payment_datetime.replace(
+                        hour=hours, minute=minutes, second=0
+                    )
+                    payment_timestamp = payment_datetime.strftime("%Y-%m-%d %H:%M:%S%z")
 
                 result.append(
                     {
+                        "fee_id": str(uuid.uuid4()),
                         "id": counter,
                         "student_id": student["id"],
                         "semester_id": semester["id"],
                         "fee_amount": fee_amount,
-                        "payment_date": payment_date,
+                        "payment_timestamp": payment_timestamp,
+                        "created_at": current_time,
+                        "updated_at": current_time,
                     }
                 )
                 counter += 1

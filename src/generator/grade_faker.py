@@ -1,4 +1,6 @@
 import random
+import uuid
+from datetime import datetime
 
 # Indonesian university grading scale
 grade_ranges = [
@@ -22,9 +24,10 @@ def generate_grade(registrations):
         registrations: List of registration dicts from registration_faker
 
     Returns:
-        List of dicts with keys: id, registration_id, final_grade, letter_grade
+        List of dicts with keys: grade_id, id, registration_id, final_grade, letter_grade, created_at, updated_at
     """
     result = []
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # Grade distribution weights - shape resembles a normal distribution
     # Most students get Bs, fewer get As and Cs, very few get Ds or Es
@@ -63,10 +66,13 @@ def generate_grade(registrations):
 
         result.append(
             {
+                "grade_id": str(uuid.uuid4()),
                 "id": i + 1,
                 "registration_id": registration["id"],
                 "final_grade": final_grade,
                 "letter_grade": letter_grade,
+                "created_at": current_time,
+                "updated_at": current_time,
             }
         )
 

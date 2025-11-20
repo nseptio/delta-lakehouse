@@ -1,3 +1,5 @@
+import uuid
+from datetime import datetime
 from typing import List, Tuple
 
 
@@ -75,12 +77,13 @@ def generate_academic_record(
         courses: List of course dicts from course_faker
 
     Returns:
-        List of dicts with keys: id, student_id, semester_id, semester_gpa,
+        List of dicts with keys: record_id, id, student_id, semester_id, semester_gpa,
                                 cumulative_gpa, semester_credits, credits_passed,
-                                total_credits, created_at
+                                total_credits, created_at, updated_at
     """
     result = []
     counter = 1
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # Track student's cumulative data
     student_data = {}
@@ -166,10 +169,11 @@ def generate_academic_record(
             student_data[student_id]["total_credits"] = new_total
 
             # Create academic record
-            created_at = semester["end_date"]  # Records created at end of semester
+            # Use current_time for both created_at and updated_at to maintain consistency
 
             result.append(
                 {
+                    "record_id": str(uuid.uuid4()),
                     "id": counter,
                     "student_id": student_id,
                     "semester_id": semester_id,
@@ -178,7 +182,8 @@ def generate_academic_record(
                     "semester_credits": semester_credits,
                     "credits_passed": credits_passed,
                     "total_credits": new_total,
-                    "created_at": created_at,
+                    "created_at": current_time,
+                    "updated_at": current_time,
                 }
             )
             counter += 1

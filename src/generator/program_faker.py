@@ -1,5 +1,8 @@
-from faker import Faker
 import random
+import uuid
+from datetime import datetime
+
+from faker import Faker
 
 # Accurate programs by faculty at UI (as of 2023)
 program_options = {
@@ -129,7 +132,7 @@ program_options = {
 def generate_program(fake: Faker, faculties, n=10):
     """
     Generate n random program entries
-    Returns list of dicts with keys: id, program_code, program_name, faculty_id
+    Returns list of dicts with keys: program_id, id, program_code, program_name, faculty_id, created_at, updated_at
 
     Args:
         faculties: List of faculty dicts from faculty_faker
@@ -138,6 +141,7 @@ def generate_program(fake: Faker, faculties, n=10):
     result = []
     program_id = 1
     used_codes = set()
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # First, add standard programs for each faculty
     for faculty in faculties:
@@ -154,10 +158,13 @@ def generate_program(fake: Faker, faculties, n=10):
                 used_codes.add(program_code)
                 result.append(
                     {
+                        "program_id": str(uuid.uuid4()),
                         "id": program_id,
                         "program_code": program_code,
                         "program_name": program_name,
                         "faculty_id": faculty_id,
+                        "created_at": current_time,
+                        "updated_at": current_time,
                     }
                 )
                 program_id += 1
@@ -184,10 +191,13 @@ def generate_program(fake: Faker, faculties, n=10):
 
         result.append(
             {
+                "program_id": str(uuid.uuid4()),
                 "id": program_id,
                 "program_code": program_code,
                 "program_name": program_name,
                 "faculty_id": faculty_id,
+                "created_at": current_time,
+                "updated_at": current_time,
             }
         )
         program_id += 1

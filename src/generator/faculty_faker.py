@@ -1,3 +1,6 @@
+import uuid
+from datetime import datetime
+
 from faker import Faker
 
 # Accurate list of UI's faculties (as of 2023)
@@ -24,9 +27,10 @@ faculty_options = [
 def generate_faculty(fake: Faker, n=1):
     """
     Generate n random faculty entries
-    Returns list of dicts with keys: id, faculty_code, faculty_name
+    Returns list of dicts with keys: faculty_id, faculty_code, faculty_name, created_at, updated_at
     """
     result = []
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # Use all predefined faculties first
     used_faculties = []
@@ -34,7 +38,14 @@ def generate_faculty(fake: Faker, n=1):
         faculty_code, faculty_name = faculty_options[i]
         used_faculties.append(faculty_code)
         result.append(
-            {"id": i + 1, "faculty_code": faculty_code, "faculty_name": faculty_name}
+            {
+                "faculty_id": str(uuid.uuid4()),
+                "id": i + 1,
+                "faculty_code": faculty_code,
+                "faculty_name": faculty_name,
+                "created_at": current_time,
+                "updated_at": current_time,
+            }
         )
 
     # If more faculties needed, generate random ones
@@ -47,9 +58,12 @@ def generate_faculty(fake: Faker, n=1):
 
         result.append(
             {
+                "faculty_id": str(uuid.uuid4()),
                 "id": i + 1,
                 "faculty_code": new_code,
                 "faculty_name": f"Fakultas {fake.word().capitalize()}",
+                "created_at": current_time,
+                "updated_at": current_time,
             }
         )
 

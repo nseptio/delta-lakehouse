@@ -1,4 +1,5 @@
 import random
+import uuid
 from datetime import datetime, timedelta
 
 
@@ -12,9 +13,10 @@ def generate_semester(n=18, start_year=2018, end_year=2027):
         end_year: Ending academic year
 
     Returns:
-        List of dicts with keys: id, semester_code, start_date, end_date
+        List of dicts with keys: semester_id, id, semester_code, semester_name, start_date, end_date, created_at, updated_at
     """
     result = []
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # UI uses format: Semester [Ganjil/Genap] YYYY/YYYY
     # or the shorter code: [1/2]/YYYY
@@ -88,11 +90,14 @@ def generate_semester(n=18, start_year=2018, end_year=2027):
 
             result.append(
                 {
+                    "semester_id": str(uuid.uuid4()),
                     "id": current_id,
                     "semester_code": semester_code,
                     "semester_name": semester_name,
                     "start_date": start_date.strftime("%Y-%m-%d"),
                     "end_date": end_date.strftime("%Y-%m-%d"),
+                    "created_at": current_time,
+                    "updated_at": current_time,
                 }
             )
 

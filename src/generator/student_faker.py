@@ -1,4 +1,5 @@
 import random
+import uuid
 from datetime import datetime
 
 from faker import Faker
@@ -15,10 +16,11 @@ def generate_student(fake: Faker, programs, n=100, start_year=2018, end_year=202
         end_year: Latest enrollment year
 
     Returns:
-        List of dicts with keys: id, npm, username, name, email, enrollment_date, program_id, is_active
+        List of dicts with keys: student_id, id, npm, username, name, email, enrollment_date, program_id, is_active, created_at, updated_at
     """
     result = []
     usernames = set()
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     for i in range(1, n + 1):
         # Select a random program
@@ -135,6 +137,7 @@ def generate_student(fake: Faker, programs, n=100, start_year=2018, end_year=202
 
         result.append(
             {
+                "student_id": str(uuid.uuid4()),
                 "id": i,
                 "npm": npm,
                 "username": username,
@@ -143,6 +146,8 @@ def generate_student(fake: Faker, programs, n=100, start_year=2018, end_year=202
                 "enrollment_date": enrollment_date,
                 "program_id": program_id,
                 "is_active": is_active,
+                "created_at": current_time,
+                "updated_at": current_time,
             }
         )
 

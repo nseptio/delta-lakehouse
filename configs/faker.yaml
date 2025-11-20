@@ -1,9 +1,9 @@
-faculty: 15
-program: 65
-lecturer: 1000
-student: 40000
-room: 300
-course: 2250
+faculty: 10
+program: 50
+lecturer: 100
+student: 2500
+room: 150
+course: 200
 semester: 8
-class_schedule: 4000
-registration: 175_000
+class_schedule: 500
+registration: 2000

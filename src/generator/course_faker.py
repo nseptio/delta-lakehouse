@@ -1,5 +1,8 @@
-from faker import Faker
 import random
+import uuid
+from datetime import datetime
+
+from faker import Faker
 
 # Course name templates and prefixes by faculty at UI
 
@@ -333,10 +336,11 @@ def generate_course(fake: Faker, programs, n=100):
         n: Number of courses to generate
 
     Returns:
-        List of dicts with keys: id, course_code, course_name, credits, program_id
+        List of dicts with keys: course_id, id, course_code, course_name, credits, program_id, created_at, updated_at
     """
     result = []
     used_codes = set()
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     for i in range(1, n + 1):
         # Select a random program
@@ -450,11 +454,14 @@ def generate_course(fake: Faker, programs, n=100):
 
         result.append(
             {
+                "course_id": str(uuid.uuid4()),
                 "id": i,
                 "course_code": course_code,
                 "course_name": course_name,
                 "credits": credits,
                 "program_id": program_id,
+                "created_at": current_time,
+                "updated_at": current_time,
             }
         )
 

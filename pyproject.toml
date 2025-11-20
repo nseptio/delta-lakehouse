@@ -26,5 +26,6 @@ dev = [
     "typer>=0.17.3",
 ]
 vis = [
+    "plotly>=6.3.0",
     "streamlit>=1.49.1",
 ]

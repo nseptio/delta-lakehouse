@@ -1,5 +1,8 @@
-from faker import Faker
 import random
+import uuid
+from datetime import datetime
+
+from faker import Faker
 
 
 def generate_lecturer(fake: Faker, faculties, n=30):
@@ -11,9 +14,10 @@ def generate_lecturer(fake: Faker, faculties, n=30):
         n: Number of lecturers to generate
 
     Returns:
-        List of dicts with keys: id, nip, name, email, faculty_id
+        List of dicts with keys: lecturer_id, id, nip, name, email, faculty_id, created_at, updated_at
     """
     result = []
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     for i in range(1, n + 1):
         # Select a random faculty
@@ -102,11 +106,14 @@ def generate_lecturer(fake: Faker, faculties, n=30):
 
         result.append(
             {
+                "lecturer_id": str(uuid.uuid4()),
                 "id": i,
                 "nip": nip,
                 "name": name,
                 "email": email,
                 "faculty_id": faculty_id,
+                "created_at": current_time,
+                "updated_at": current_time,
             }
         )
 

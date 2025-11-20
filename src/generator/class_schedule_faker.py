@@ -1,5 +1,6 @@
 import random
-from datetime import time
+import uuid
+from datetime import datetime, time
 
 # UI uses Monday-Friday (Senin-Jumat) with occasional Saturday classes
 days_of_week = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"]
@@ -38,11 +39,13 @@ def generate_class_schedule(courses, lecturers, rooms, semesters, n=200):
         n: Number of class schedules to generate
 
     Returns:
-        List of dicts with keys: id, course_id, lecturer_id, room_id, semester_id,
-                                day_of_week, start_time, end_time
+        List of dicts with keys: schedule_id, id, course_id, lecturer_id, room_id, semester_id,
+                                day_of_week, start_time, end_time, start_time_delta, end_time_delta,
+                                created_at, updated_at
     """
     result = []
     used_slots = set()  # To avoid room and time conflicts
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     for i in range(1, n + 1):
         # Select random entities
@@ -92,8 +95,15 @@ def generate_class_schedule(courses, lecturers, rooms, semesters, n=200):
         if attempts >= max_attempts:
             continue
 
+        # Create timestamp versions of start_time and end_time for Delta Lake compatibility
+        # Using a reference date (2000-01-01) to convert time to timestamp
+        reference_date = datetime(2000, 1, 1)
+        start_time_delta = datetime.combine(reference_date.date(), start_time)
+        end_time_delta = datetime.combine(reference_date.date(), end_time)
+
         result.append(
             {
+                "schedule_id": str(uuid.uuid4()),
                 "id": i,
                 "course_id": course["id"],
                 "lecturer_id": lecturer["id"],
@@ -102,6 +112,10 @@ def generate_class_schedule(courses, lecturers, rooms, semesters, n=200):
                 "day_of_week": day,
                 "start_time": start_time.strftime("%H:%M:%S"),
                 "end_time": end_time.strftime("%H:%M:%S"),
+                "start_time_delta": start_time_delta.strftime("%Y-%m-%d %H:%M:%S"),
+                "end_time_delta": end_time_delta.strftime("%Y-%m-%d %H:%M:%S"),
+                "created_at": current_time,
+                "updated_at": current_time,
             }
         )
 

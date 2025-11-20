@@ -1,4 +1,5 @@
 import random
+import uuid
 from datetime import datetime, timedelta
 
 
@@ -13,12 +14,14 @@ def generate_registration(students, courses, semesters, n=500):
         n: Number of registrations to generate
 
     Returns:
-        List of dicts with keys: id, student_id, course_id, semester_id, registration_date
+        List of dicts with keys: registration_id, id, student_id, course_id, semester_id,
+                                registration_timestamp, created_at, updated_at
     """
     result = []
     used_registrations = (
         set()
     )  # To avoid duplicate student-course-semester combinations
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # Try to create exactly n registrations
     attempt_count = 0
@@ -64,15 +67,20 @@ def generate_registration(students, courses, semesters, n=500):
         # Generate registration date (between 1-4 weeks before semester start)
         semester_start = datetime.strptime(semester["start_date"], "%Y-%m-%d")
         days_before = random.randint(7, 28)
-        registration_date = semester_start - timedelta(days=days_before)
+        registration_timestamp = semester_start - timedelta(days=days_before)
 
         result.append(
             {
+                "registration_id": str(uuid.uuid4()),
                 "id": len(result) + 1,
                 "student_id": student["id"],
                 "course_id": course["id"],
                 "semester_id": semester["id"],
-                "registration_date": registration_date.strftime("%Y-%m-%d"),
+                "registration_timestamp": registration_timestamp.strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                ),
+                "created_at": current_time,
+                "updated_at": current_time,
             }
         )
 

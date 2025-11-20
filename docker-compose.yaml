@@ -1,36 +1,79 @@
 services:
-  postgres:
-    image: postgres:13
-    container_name: siak_db
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: siak
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres:/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d siak"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+  # postgres:
+  #   image: postgres:13
+  #   container_name: siak_db
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     POSTGRES_DB: siak
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres:/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U postgres -d siak"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+
+  # trino:
+  #   image: trinodb/trino:476
+  #   container_name: trino
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     - TRINO_JVM_OPTS=-Xmx2G
+  #   networks:
+  #     - local-lakehouse
+  #   volumes:
+  #     - ./trino/catalog:/etc/trino/catalog
+  # polaris:
+  #   image: apache/polaris:1.0.1-incubating
+  #   platform: linux/amd64
+  #   container_name: polaris
+  #   ports:
+  #     - "8181:8181"
+  #     - "8182:8182"
+  #   networks:
+  #     - local-lakehouse
+  #   environment:
+  #     AWS_ACCESS_KEY_ID: minioadmin
+  #     AWS_SECRET_ACCESS_KEY: minioadmin
+  #     AWS_REGION: dummy-region
+  #     AWS_ENDPOINT_URL_S3: http://minio:9000
+  #     AWS_ENDPOINT_URL_STS: http://minio:9000
+  #     POLARIS_BOOTSTRAP_CREDENTIALS: default-realm,root,secret
+  #     polaris.features.DROP_WITH_PURGE_ENABLED: true # allow dropping tables from the SQL client
+  #     polaris.realm-context.realms: default-realm
+  #   healthcheck:
+  #     test: ["CMD", "curl", "http://localhost:8181/healthcheck"]
+  #     interval: 5s
+  #     timeout: 10s
+  #     retries: 5
+
   minio:
     image: minio/minio:RELEASE.2025-04-22T22-12-26Z-cpuv1
     container_name: minio
     restart: unless-stopped
-    networks:
-      - local-lakehouse
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_DOMAIN: minio
+      AWS_REGION: dummy-region
+      AWS_ACCESS_KEY_ID: minioadmin
+      AWS_SECRET_ACCESS_KEY: minioadmin
     ports:
       - "9000:9000"
       - "9001:9001"
+    networks:
+      local-lakehouse:
+        aliases:
+          - warehouse.minio
     command: server /data --console-address ":9001"
     volumes:
-      - /tmp:/tmp
+      - minio-data:/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
@@ -41,6 +84,8 @@ services:
     image: minio/mc:RELEASE.2025-07-21T05-28-08Z-cpuv1
     depends_on:
       - minio
+    container_name: minio-client
+    restart: unless-stopped
     networks:
       - local-lakehouse
     volumes:
@@ -51,15 +96,17 @@ services:
     entrypoint: >
       /bin/sh -c "
       until (mc alias set minio http://minio:9000 minioadmin minioadmin) do echo '...waiting...' && sleep 1; done;
-      mc rm -r --force minio/lakehouse || echo '...rm ok...';
-      mc mb minio/lakehouse || echo '...mb ok...';
-      mc anonymous set public minio/lakehouse || echo '...set ok...';
+      mc rm -r --force minio/warehouse || echo '...rm ok...';
+      mc mb minio/warehouse || echo '...mb ok...';
+      mc anonymous set public minio/warehouse || echo '...set ok...';
       tail -f /dev/null
       "
 
 networks:
   local-lakehouse:
     driver: bridge
+    name: local-lakehouse
 
 volumes:
   postgres:
+  minio-data:
