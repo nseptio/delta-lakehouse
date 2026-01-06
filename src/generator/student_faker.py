@@ -20,6 +20,7 @@ def generate_student(fake: Faker, programs, n=100, start_year=2018, end_year=202
     """
     result = []
     usernames = set()
+    used_npms = set()
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     for i in range(1, n + 1):
@@ -100,6 +101,17 @@ def generate_student(fake: Faker, programs, n=100, start_year=2018, end_year=202
         npm = npm.zfill(10)[
             :10
         ]  # Pad with leading zeros if needed and limit to 10 chars
+
+        # Ensure NPM is unique
+        counter = 1
+        base_npm = npm
+        while npm in used_npms:
+            # Modify last 4 digits to make it unique
+            serial_num = (int(base_npm[-4:]) + counter) % 10000
+            npm = base_npm[:-4] + f"{serial_num:04d}"
+            counter += 1
+
+        used_npms.add(npm)
 
         # Generate name and gender
         gender = random.choice(["male", "female"])

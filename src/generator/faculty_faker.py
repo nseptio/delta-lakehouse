@@ -33,10 +33,10 @@ def generate_faculty(fake: Faker, n=1):
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # Use all predefined faculties first
-    used_faculties = []
+    used_faculty_codes = set()
     for i in range(min(n, len(faculty_options))):
         faculty_code, faculty_name = faculty_options[i]
-        used_faculties.append(faculty_code)
+        used_faculty_codes.add(faculty_code)
         result.append(
             {
                 "faculty_id": str(uuid.uuid4()),
@@ -52,8 +52,8 @@ def generate_faculty(fake: Faker, n=1):
     for i in range(len(faculty_options), n):
         while True:
             new_code = fake.random_letter().upper() + fake.random_letter().upper()
-            if new_code not in used_faculties:
-                used_faculties.append(new_code)
+            if new_code not in used_faculty_codes:
+                used_faculty_codes.add(new_code)
                 break
 
         result.append(

@@ -17,6 +17,7 @@ def generate_lecturer(fake: Faker, faculties, n=30):
         List of dicts with keys: lecturer_id, id, nip, name, email, faculty_id, created_at, updated_at
     """
     result = []
+    used_nips = set()
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     for i in range(1, n + 1):
@@ -53,6 +54,14 @@ def generate_lecturer(fake: Faker, faculties, n=30):
         check_digit = str(random.randint(0, 9))
 
         nip = f"{year_str}{month_str}{day_str}{gender_code}{serial}{check_digit}"
+
+        # Ensure NIP is unique
+        while nip in used_nips:
+            serial = f"{random.randint(1, 9999):04d}"
+            check_digit = str(random.randint(0, 9))
+            nip = f"{year_str}{month_str}{day_str}{gender_code}{serial}{check_digit}"
+
+        used_nips.add(nip)
 
         # Generate UI-specific email (faculty-specific domain or central domain)
         # UI format: firstname.lastname@ui.ac.id or firstname.lastname@[faculty].ui.ac.id

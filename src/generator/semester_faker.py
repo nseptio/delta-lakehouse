@@ -88,6 +88,7 @@ def generate_semester(n=18, start_year=2018, end_year=2027):
             while end_date.weekday() >= 5:
                 end_date += timedelta(days=1)
 
+            # semester_code is naturally unique due to format: code/year
             result.append(
                 {
                     "semester_id": str(uuid.uuid4()),
